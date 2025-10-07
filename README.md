@@ -93,6 +93,41 @@ ros2 topic hz /image_raw
 ros2 topic echo /image_raw/header
 ```
 
+5) 脚本启动（可选，便捷方式）
+
+```bash
+cd /home/fin/Code/RoboMaster/Task4/hik_camera_driver
+chmod +x scripts/camera_manager.sh
+
+# 使用 YAML 默认参数启动完整系统（等价于 launch 方法）
+./scripts/camera_manager.sh start
+
+# 仅启动，不打开 RViz 或帧率监控
+./scripts/camera_manager.sh start --no-rviz --no-monitor
+
+# 覆盖关键运行参数（命令行优先于 YAML）
+./scripts/camera_manager.sh start \
+  -s 00F26632041 \
+  -i 192.168.1.100 \
+  -t /image_raw \
+  -f 30.0 \
+  -e 2000.0 \
+  -g 2.0 \
+  -p bgr8
+```
+
+脚本参数说明：
+
+- `-i, --ip`：相机 IP 地址（GigE）
+- `-s, --serial`：相机序列号（USB）
+- `-t, --topic`：图像话题名，默认 `/image_raw`
+- `-f, --fps`：设定帧率（FPS）
+- `-e, --exposure`：曝光时间（微秒）
+- `-g, --gain`：增益
+- `-p, --pixel`：像素格式（bgr8/rgb8/mono8 等）
+- `--no-rviz`：不启动 RViz
+- `--no-monitor`：不启动帧率监控
+
 ## 启动方式
 
 - 推荐使用 Launch：`ros2 launch hik_camera_driver hik_camera_system.launch.py use_rviz:=true monitor_fps:=true`
