@@ -84,21 +84,29 @@ void HikCameraDriver::initializeAfterConstruction()
         // 启动采集线程
         should_stop_ = false;
         capture_thread_ = std::thread(&HikCameraDriver::cameraCaptureThread, this);
-        
-        // 设置重连定时器
-        if (auto_reconnect_) {
-            reconnect_timer_ = this->create_wall_timer(
-                std::chrono::seconds(reconnect_interval_),
-                [this]() {
-                    if (!camera_connected_) {
-                        RCLCPP_WARN(this->get_logger(), "尝试重新连接相机...");
+    } else {
+        RCLCPP_ERROR(this->get_logger(), "相机初始化失败");
+    }
+
+    // 设置重连定时器（无论初始化是否成功，都建立定时器以便后续自动重连）
+    if (auto_reconnect_) {
+        reconnect_timer_ = this->create_wall_timer(
+            std::chrono::seconds(reconnect_interval_),
+            [this]() {
+                if (!camera_connected_) {
+                    RCLCPP_WARN(this->get_logger(), "尝试重新连接相机...");
+                    reconnectCamera();
+                } else {
+                    // 若长时间无帧或超时累计，触发保护性重连
+                    auto now = this->now();
+                    double since_last = (now - last_frame_time_).seconds();
+                    if (since_last > 5.0) {
+                        RCLCPP_WARN(this->get_logger(), "检测到%.1f秒无帧输出，执行安全重连", since_last);
                         reconnectCamera();
                     }
                 }
-            );
-        }
-    } else {
-        RCLCPP_ERROR(this->get_logger(), "相机初始化失败");
+            }
+        );
     }
 }
 
@@ -366,6 +374,11 @@ void HikCameraDriver::cameraCaptureThread()
                         } else {
                             RCLCPP_WARN(this->get_logger(), "不支持的像素格式: %ld", static_cast<long>(info.enPixelType));
                         }
+                    } else if (nRet == MV_E_HANDLE || nRet == 0x8000000B /*MV_E_ACCESS*/ || nRet == 0x8000000C /*MV_E_DISCONNECT*/ ) {
+                        // 句柄错误/访问错误/断连
+                        RCLCPP_ERROR(this->get_logger(), "采集失败错误码=%d，标记断开连接", nRet);
+                        camera_connected_ = false;
+                        continue;
                     }
                 }
 #endif
