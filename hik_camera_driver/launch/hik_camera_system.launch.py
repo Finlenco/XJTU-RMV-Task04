@@ -27,8 +27,10 @@ def generate_launch_description():
     )
     
     # 参数文件（默认）
-    # 使用安装后的共享目录中的参数文件（推荐生产模式）
-    params_file = os.path.join(pkg_share, 'config', 'camera_params.yaml')
+    # 优先使用源码目录下的参数文件，确保修改后无需重新安装即可生效
+    src_params = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'camera_params.yaml')
+    install_params = os.path.join(pkg_share, 'config', 'camera_params.yaml')
+    params_file = src_params if os.path.exists(src_params) else install_params
 
     # 创建相机节点
     hik_camera_node = Node(

@@ -10,7 +10,7 @@ hik_camera_driver:
     reconnect_interval: 5              # 重连间隔(秒)
     
     # 相机参数
-    frame_rate: 30.0                   # 帧率
+    frame_rate: 60.0                   # 帧率
     exposure_time: 1000.0              # 曝光时间(微秒)
     gain: 1.0                          # 增益值
     pixel_format: "bgr8"               # 像素格式

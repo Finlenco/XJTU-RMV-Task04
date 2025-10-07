@@ -12,18 +12,18 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# 默认参数
+# 默认参数（置空=不覆盖 YAML）。仅显式传参时才覆盖
 CAMERA_IP=""
 CAMERA_SERIAL=""
-TOPIC_NAME="/image_raw"
-FRAME_RATE=30.0
-EXPOSURE_TIME=1000.0
-GAIN=1.0
-PIXEL_FORMAT="bgr8"
-AUTO_RECONNECT=true
-RECONNECT_INTERVAL=5
-USE_RVIZ=true
-MONITOR_FPS=true
+TOPIC_NAME=""
+FRAME_RATE=""
+EXPOSURE_TIME=""
+GAIN=""
+PIXEL_FORMAT=""
+AUTO_RECONNECT=""
+RECONNECT_INTERVAL=""
+USE_RVIZ=""
+MONITOR_FPS=""
 
 # 显示帮助信息
 show_help() {
@@ -108,17 +108,17 @@ start_system() {
     [ -n "$USE_RVIZ" ] && LAUNCH_ARGS+=" use_rviz:=$USE_RVIZ"
     [ -n "$MONITOR_FPS" ] && LAUNCH_ARGS+=" monitor_fps:=$MONITOR_FPS"
     
-    echo -e "${CYAN}📋 启动参数:${NC}"
-    echo "  相机IP: $CAMERA_IP"
-    echo "  相机序列号: $CAMERA_SERIAL"
-    echo "  话题名称: $TOPIC_NAME"
-    echo "  帧率: $FRAME_RATE FPS"
-    echo "  曝光时间: $EXPOSURE_TIME μs"
-    echo "  增益: $GAIN"
-    echo "  像素格式: $PIXEL_FORMAT"
-    echo "  自动重连: $AUTO_RECONNECT"
-    echo "  启动RViz: $USE_RVIZ"
-    echo "  帧率监控: $MONITOR_FPS"
+    echo -e "${CYAN}📋 启动参数(空=使用YAML默认):${NC}"
+    echo "  相机IP: ${CAMERA_IP:-<YAML>}"
+    echo "  相机序列号: ${CAMERA_SERIAL:-<YAML>}"
+    echo "  话题名称: ${TOPIC_NAME:-<YAML>}"
+    echo "  帧率: ${FRAME_RATE:-<YAML>}"
+    echo "  曝光时间: ${EXPOSURE_TIME:-<YAML>}"
+    echo "  增益: ${GAIN:-<YAML>}"
+    echo "  像素格式: ${PIXEL_FORMAT:-<YAML>}"
+    echo "  自动重连: ${AUTO_RECONNECT:-<YAML>}"
+    echo "  启动RViz: ${USE_RVIZ:-<YAML>}"
+    echo "  帧率监控: ${MONITOR_FPS:-<YAML>}"
     echo ""
     
     # 启动系统
@@ -128,30 +128,30 @@ start_system() {
 
 # 测试系统
 test_system() {
-    echo -e "${BLUE}🧪 测试海康威视相机系统...${NC}"
+    echo -e "${BLUE} 测试海康威视相机系统...${NC}"
     
     # 检查环境
     check_ros2_env
     check_workspace
     
     # 测试1: 编译测试
-    echo -e "${YELLOW}📋 测试1: 编译测试...${NC}"
+    echo -e "${YELLOW} 测试1: 编译测试...${NC}"
     colcon build --packages-select hik_camera_driver
     if [ $? -eq 0 ]; then
-        echo -e "${GREEN}✅ 编译成功${NC}"
+        echo -e "${GREEN}编译成功${NC}"
     else
         echo -e "${RED}❌ 编译失败${NC}"
         return 1
     fi
     
     # 测试2: 节点启动测试
-    echo -e "${YELLOW}📋 测试2: 节点启动测试...${NC}"
+    echo -e "${YELLOW} 测试2: 节点启动测试...${NC}"
     ros2 run hik_camera_driver hik_camera_node --ros-args -p topic_name:="/test_image" &
     NODE_PID=$!
     sleep 3
     
     if ps -p $NODE_PID > /dev/null; then
-        echo -e "${GREEN}✅ 相机节点启动成功${NC}"
+        echo -e "${GREEN}相机节点启动成功${NC}"
         kill $NODE_PID 2>/dev/null
     else
         echo -e "${RED}❌ 相机节点启动失败${NC}"
@@ -165,7 +165,7 @@ test_system() {
     sleep 2
     
     if ps -p $MONITOR_PID > /dev/null; then
-        echo -e "${GREEN}✅ 帧率监控节点启动成功${NC}"
+        echo -e "${GREEN}帧率监控节点启动成功${NC}"
         kill $MONITOR_PID 2>/dev/null
     else
         echo -e "${RED}❌ 帧率监控节点启动失败${NC}"
@@ -179,7 +179,7 @@ test_system() {
     sleep 2
     
     if ps -p $PARAM_PID > /dev/null; then
-        echo -e "${GREEN}✅ 参数信息节点启动成功${NC}"
+        echo -e "${GREEN}参数信息节点启动成功${NC}"
         kill $PARAM_PID 2>/dev/null
     else
         echo -e "${RED}❌ 参数信息节点启动失败${NC}"
@@ -193,26 +193,26 @@ test_system() {
     sleep 3
     
     if ps -p $NODE_PID > /dev/null; then
-        echo -e "${GREEN}✅ 参数设置成功${NC}"
+        echo -e "${GREEN}参数设置成功${NC}"
         kill $NODE_PID 2>/dev/null
     else
         echo -e "${RED}❌ 参数设置失败${NC}"
         return 1
     fi
     
-    echo -e "${GREEN}🎉 所有测试通过！${NC}"
+    echo -e "${GREEN}所有测试通过！${NC}"
 }
 
 # 安装依赖
 install_dependencies() {
-    echo -e "${BLUE}📦 安装系统依赖...${NC}"
+    echo -e "${BLUE}安装系统依赖...${NC}"
     
     # 更新包列表
-    echo -e "${YELLOW}📋 更新包列表...${NC}"
+    echo -e "${YELLOW}更新包列表...${NC}"
     sudo apt update
     
     # 安装ROS2依赖
-    echo -e "${YELLOW}📋 安装ROS2依赖...${NC}"
+    echo -e "${YELLOW}安装ROS2依赖...${NC}"
     sudo apt install -y \
         ros-humble-cv-bridge \
         ros-humble-image-transport \
@@ -221,53 +221,53 @@ install_dependencies() {
         ros-humble-std-msgs
     
     # 安装OpenCV
-    echo -e "${YELLOW}📋 安装OpenCV...${NC}"
+    echo -e "${YELLOW}安装OpenCV...${NC}"
     sudo apt install -y \
         libopencv-dev \
         python3-opencv
     
     # 安装编译工具
-    echo -e "${YELLOW}📋 安装编译工具...${NC}"
+    echo -e "${YELLOW}安装编译工具...${NC}"
     sudo apt install -y \
         build-essential \
         cmake \
         git
     
-    echo -e "${GREEN}✅ 依赖安装完成${NC}"
+    echo -e "${GREEN}依赖安装完成${NC}"
 }
 
 # 清理系统
 clean_system() {
-    echo -e "${BLUE}🧹 清理构建文件...${NC}"
+    echo -e "${BLUE}清理构建文件...${NC}"
     
     # 停止所有相关进程
-    echo -e "${YELLOW}📋 停止相关进程...${NC}"
+    echo -e "${YELLOW}停止相关进程...${NC}"
     pkill -f "hik_camera_driver" 2>/dev/null
     pkill -f "fps_monitor" 2>/dev/null
     pkill -f "param_info" 2>/dev/null
     pkill -f "rviz2" 2>/dev/null
     
     # 清理构建目录
-    echo -e "${YELLOW}📋 清理构建目录...${NC}"
+    echo -e "${YELLOW}清理构建目录...${NC}"
     rm -rf build/ install/ log/
     
-    echo -e "${GREEN}✅ 清理完成${NC}"
+    echo -e "${GREEN}清理完成${NC}"
 }
 
 # 查看系统状态
 show_status() {
-    echo -e "${BLUE}📊 系统状态检查...${NC}"
+    echo -e "${BLUE}系统状态检查...${NC}"
     
     # 检查ROS2环境
     if [ -n "$ROS_DISTRO" ]; then
-        echo -e "${GREEN}✅ ROS2环境: $ROS_DISTRO${NC}"
+        echo -e "${GREEN}ROS2环境: $ROS_DISTRO${NC}"
     else
         echo -e "${RED}❌ ROS2环境未设置${NC}"
     fi
     
     # 检查工作空间
     if [ -f "install/setup.bash" ]; then
-        echo -e "${GREEN}✅ 工作空间已构建${NC}"
+        echo -e "${GREEN}工作空间已构建${NC}"
     else
         echo -e "${YELLOW}⚠️  工作空间未构建${NC}"
     fi
