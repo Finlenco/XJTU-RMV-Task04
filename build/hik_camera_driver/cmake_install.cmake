@@ -47,7 +47,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/hik_camera_node")
     file(RPATH_CHECK
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/hik_camera_node"
-         RPATH "")
+         RPATH "/opt/MVS/lib/64:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/lib")
   endif()
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver" TYPE EXECUTABLE FILES "/home/fin/Code/RoboMaster/Task4/build/hik_camera_driver/hik_camera_node")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/hik_camera_node" AND
@@ -55,7 +55,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
     file(RPATH_CHANGE
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/hik_camera_node"
          OLD_RPATH "/opt/MVS/lib/64:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/lib:"
-         NEW_RPATH "")
+         NEW_RPATH "/opt/MVS/lib/64:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/lib")
     if(CMAKE_INSTALL_DO_STRIP)
       execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/hik_camera_node")
     endif()
@@ -67,7 +67,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/fps_monitor_node")
     file(RPATH_CHECK
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/fps_monitor_node"
-         RPATH "")
+         RPATH "/opt/MVS/lib/64:/opt/ros/humble/lib")
   endif()
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver" TYPE EXECUTABLE FILES "/home/fin/Code/RoboMaster/Task4/build/hik_camera_driver/fps_monitor_node")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/fps_monitor_node" AND
@@ -75,7 +75,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
     file(RPATH_CHANGE
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/fps_monitor_node"
          OLD_RPATH "/opt/MVS/lib/64:/opt/ros/humble/lib:"
-         NEW_RPATH "")
+         NEW_RPATH "/opt/MVS/lib/64:/opt/ros/humble/lib")
     if(CMAKE_INSTALL_DO_STRIP)
       execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/fps_monitor_node")
     endif()
@@ -87,7 +87,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/param_info_node")
     file(RPATH_CHECK
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/param_info_node"
-         RPATH "")
+         RPATH "/opt/MVS/lib/64:/opt/ros/humble/lib")
   endif()
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver" TYPE EXECUTABLE FILES "/home/fin/Code/RoboMaster/Task4/build/hik_camera_driver/param_info_node")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/param_info_node" AND
@@ -95,7 +95,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
     file(RPATH_CHANGE
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/param_info_node"
          OLD_RPATH "/opt/MVS/lib/64:/opt/ros/humble/lib:"
-         NEW_RPATH "")
+         NEW_RPATH "/opt/MVS/lib/64:/opt/ros/humble/lib")
     if(CMAKE_INSTALL_DO_STRIP)
       execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/hik_camera_driver/param_info_node")
     endif()

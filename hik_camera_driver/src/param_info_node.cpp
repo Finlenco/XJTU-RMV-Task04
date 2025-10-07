@@ -88,13 +88,10 @@ private:
         param_info += "   ros2 param set /hik_camera_driver <参数名> <值>\n";
         param_info += "   例如: ros2 param set /hik_camera_driver frame_rate 60.0\n";
         
-        // 发布参数信息
+        // 发布参数信息（不再重复详细日志，仅首次已打印）
         std_msgs::msg::String msg;
         msg.data = param_info;
         param_info_pub_->publish(msg);
-        
-        // 输出到日志
-        RCLCPP_INFO(this->get_logger(), "\n%s", param_info.c_str());
     }
     
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr param_info_pub_;

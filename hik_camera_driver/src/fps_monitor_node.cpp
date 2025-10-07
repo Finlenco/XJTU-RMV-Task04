@@ -99,21 +99,10 @@ private:
         fps_msg.data = current_fps;
         fps_pub_->publish(fps_msg);
         
-        // 输出统计信息
+        // 输出精简统计
         RCLCPP_INFO(this->get_logger(), 
-            "📊 帧率统计 - 话题: %s", monitor_topic_.c_str());
-        RCLCPP_INFO(this->get_logger(), 
-            "   总帧数: %lu", frame_count_.load());
-        RCLCPP_INFO(this->get_logger(), 
-            "   运行时间: %.1f 秒", elapsed_time);
-        RCLCPP_INFO(this->get_logger(), 
-            "   平均帧率: %.2f FPS", avg_fps);
-        RCLCPP_INFO(this->get_logger(), 
-            "   当前帧率: %.2f FPS", current_fps);
-        RCLCPP_INFO(this->get_logger(), 
-            "   最近帧率: %.2f FPS", recent_fps);
-        RCLCPP_INFO(this->get_logger(), 
-            "   %s", std::string(50, '=').c_str());
+            "FPS topic=%s avg=%.2f cur=%.2f recent=%.2f", 
+            monitor_topic_.c_str(), avg_fps, current_fps, recent_fps);
         
         // 更新统计变量
         last_frame_count_ = frame_count_;

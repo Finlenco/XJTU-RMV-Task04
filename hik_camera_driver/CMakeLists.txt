@@ -26,43 +26,47 @@ include_directories(include)
 include_directories("${OpenCV_INCLUDE_DIRS}")
 include_directories("/opt/ros/humble/include")
 
-# 海康威视MVS SDK配置：优先 ENV MVS_HOME，其次 ~/opt/MVS，最后 /opt/MVS
-set(MVS_SDK_DIR "")
-if(DEFINED ENV{MVS_HOME} AND EXISTS "$ENV{MVS_HOME}")
-  set(MVS_SDK_DIR "$ENV{MVS_HOME}")
-elseif(DEFINED ENV{HOME} AND EXISTS "$ENV{HOME}/opt/MVS")
-  set(MVS_SDK_DIR "$ENV{HOME}/opt/MVS")
-elseif(EXISTS "/opt/MVS")
-  set(MVS_SDK_DIR "/opt/MVS")
+option(USE_MVS_SDK "Enable Hikvision MVS SDK support" ON)
+
+if(USE_MVS_SDK)
+  # 海康威视MVS SDK配置：优先 ENV MVS_HOME，其次 ~/opt/MVS，最后 /opt/MVS
+  set(MVS_SDK_DIR "")
+  if(DEFINED ENV{MVS_HOME} AND EXISTS "$ENV{MVS_HOME}")
+    set(MVS_SDK_DIR "$ENV{MVS_HOME}")
+  elseif(DEFINED ENV{HOME} AND EXISTS "$ENV{HOME}/opt/MVS")
+    set(MVS_SDK_DIR "$ENV{HOME}/opt/MVS")
+  elseif(EXISTS "/opt/MVS")
+    set(MVS_SDK_DIR "/opt/MVS")
+  endif()
+
+  if(NOT MVS_SDK_DIR)
+    message(FATAL_ERROR "MVS SDK not found. Please set MVS_HOME or install to ~/opt/MVS or /opt/MVS")
+  endif()
+
+  include_directories("${MVS_SDK_DIR}/include")
+
+  # 添加MVS SDK库路径
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+      set(MVS_LIB_DIR "${MVS_SDK_DIR}/lib/64")
+  else()
+      set(MVS_LIB_DIR "${MVS_SDK_DIR}/lib/32")
+  endif()
+
+  link_directories("${MVS_LIB_DIR}")
+
+  # RPATH 设置，运行时无需额外环境变量即可找到 libMvCameraControl.so
+  set(CMAKE_BUILD_RPATH "${MVS_LIB_DIR}")
+  set(CMAKE_INSTALL_RPATH "${MVS_LIB_DIR}")
+  set(CMAKE_SKIP_BUILD_RPATH FALSE)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+  # 定义MVS SDK宏
+  add_definitions(-DHAVE_MVS_SDK)
+
+  message(STATUS "MVS SDK directory: ${MVS_SDK_DIR}")
+  message(STATUS "MVS library directory: ${MVS_LIB_DIR}")
 endif()
-
-if(NOT MVS_SDK_DIR)
-  message(FATAL_ERROR "MVS SDK not found. Please set MVS_HOME or install to ~/opt/MVS or /opt/MVS")
-endif()
-
-include_directories("${MVS_SDK_DIR}/include")
-
-# 添加MVS SDK库路径
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(MVS_LIB_DIR "${MVS_SDK_DIR}/lib/64")
-else()
-    set(MVS_LIB_DIR "${MVS_SDK_DIR}/lib/32")
-endif()
-
-link_directories("${MVS_LIB_DIR}")
-
-# RPATH 设置，运行时无需额外环境变量即可找到 libMvCameraControl.so
-set(CMAKE_BUILD_RPATH "${MVS_LIB_DIR}")
-set(CMAKE_INSTALL_RPATH "${MVS_LIB_DIR}")
-set(CMAKE_SKIP_BUILD_RPATH FALSE)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-# 定义MVS SDK宏
-add_definitions(-DHAVE_MVS_SDK)
-
-message(STATUS "MVS SDK directory: ${MVS_SDK_DIR}")
-message(STATUS "MVS library directory: ${MVS_LIB_DIR}")
 
 # 添加可执行文件
 add_executable(hik_camera_node 
@@ -102,12 +106,14 @@ ament_target_dependencies(param_info_node
 # 链接OpenCV
 target_link_libraries(hik_camera_node ${OpenCV_LIBS})
 
-# 链接MVS SDK库
-target_link_libraries(hik_camera_node 
-    MvCameraControl
-    pthread
-)
-message(STATUS "Linking MVS SDK libraries")
+# 链接MVS SDK库（可选）
+if(USE_MVS_SDK)
+  target_link_libraries(hik_camera_node 
+      MvCameraControl
+      pthread
+  )
+  message(STATUS "Linking MVS SDK libraries")
+endif()
 
 # 安装可执行文件
 install(TARGETS hik_camera_node fps_monitor_node param_info_node

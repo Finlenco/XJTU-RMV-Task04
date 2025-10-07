@@ -95,25 +95,38 @@ start_system() {
     check_workspace
     
     # 构建启动参数（仅显式传参时才覆盖 YAML）
-    # 注意：节点参数需要通过 --ros-args -p 传递；功能性开关仍用 launch 参数
-    LAUNCH_ARGS=""
-    ROS_ARGS=""
-    add_param() {
-        # $1=key $2=value
-        [ -n "$2" ] && ROS_ARGS+=" -p $1:=$2"
-    }
-    add_param "camera_ip" "$CAMERA_IP"
-    add_param "camera_serial" "$CAMERA_SERIAL"
-    add_param "topic_name" "$TOPIC_NAME"
-    add_param "frame_rate" "$FRAME_RATE"
-    add_param "exposure_time" "$EXPOSURE_TIME"
-    add_param "gain" "$GAIN"
-    add_param "pixel_format" "$PIXEL_FORMAT"
-    add_param "auto_reconnect" "$AUTO_RECONNECT"
-    add_param "reconnect_interval" "$RECONNECT_INTERVAL"
+    # 方案：将覆盖项写入临时YAML，通过 override_params 传入 launch 文件
+    LAUNCH_ARGS_ARR=()
+    
+    # 生成临时覆盖参数文件
+    TMP_DIR="/tmp/hik_camera_driver"
+    mkdir -p "$TMP_DIR"
+    OVERRIDE_FILE="$TMP_DIR/override_$(date +%s).yaml"
+    
+    {
+        echo "hik_camera_driver:"
+        echo "  ros__parameters:"
+        [ -n "$CAMERA_IP" ] && echo "    camera_ip: \"$CAMERA_IP\""
+        [ -n "$CAMERA_SERIAL" ] && echo "    camera_serial: \"$CAMERA_SERIAL\""
+        [ -n "$TOPIC_NAME" ] && echo "    topic_name: \"$TOPIC_NAME\""
+        [ -n "$FRAME_RATE" ] && echo "    frame_rate: $FRAME_RATE"
+        [ -n "$EXPOSURE_TIME" ] && echo "    exposure_time: $EXPOSURE_TIME"
+        [ -n "$GAIN" ] && echo "    gain: $GAIN"
+        [ -n "$PIXEL_FORMAT" ] && echo "    pixel_format: \"$PIXEL_FORMAT\""
+        [ -n "$AUTO_RECONNECT" ] && echo "    auto_reconnect: $AUTO_RECONNECT"
+        [ -n "$RECONNECT_INTERVAL" ] && echo "    reconnect_interval: $RECONNECT_INTERVAL"
+    } > "$OVERRIDE_FILE"
+    
+    # 如果覆盖文件除了头部外没有有效条目，则不传入
+    if grep -qE "^\s{4}\w" "$OVERRIDE_FILE"; then
+        LAUNCH_ARGS_ARR+=("override_params:=$OVERRIDE_FILE")
+    else
+        rm -f "$OVERRIDE_FILE"
+    fi
+    
     # launch 级别开关
-    [ -n "$USE_RVIZ" ] && LAUNCH_ARGS+=" use_rviz:=$USE_RVIZ"
-    [ -n "$MONITOR_FPS" ] && LAUNCH_ARGS+=" monitor_fps:=$MONITOR_FPS"
+    if [ -n "$USE_RVIZ" ]; then LAUNCH_ARGS_ARR+=("use_rviz:=$USE_RVIZ"); fi
+    if [ -n "$MONITOR_FPS" ]; then LAUNCH_ARGS_ARR+=("monitor_fps:=$MONITOR_FPS"); fi
     
     echo -e "${CYAN}📋 启动参数(空=使用YAML默认):${NC}"
     echo "  相机IP: ${CAMERA_IP:-<YAML>}"
@@ -130,11 +143,7 @@ start_system() {
     
     # 启动系统
     echo -e "${BLUE}🎬 启动系统...${NC}"
-    if [ -n "$ROS_ARGS" ]; then
-        ros2 launch hik_camera_driver hik_camera_system.launch.py $LAUNCH_ARGS --ros-args $ROS_ARGS
-    else
-        ros2 launch hik_camera_driver hik_camera_system.launch.py $LAUNCH_ARGS
-    fi
+    ros2 launch hik_camera_driver hik_camera_system.launch.py "${LAUNCH_ARGS_ARR[@]}"
 }
 
 # 测试系统

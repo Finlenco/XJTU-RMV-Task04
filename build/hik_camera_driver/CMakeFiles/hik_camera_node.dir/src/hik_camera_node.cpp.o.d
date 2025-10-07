@@ -625,6 +625,8 @@ CMakeFiles/hik_camera_node.dir/src/hik_camera_node.cpp.o: \
  /opt/ros/humble/include/rclcpp/rclcpp/wait_set_policies/thread_safe_synchronization.hpp \
  /opt/ros/humble/include/rclcpp/rclcpp/wait_set_policies/detail/write_preferring_read_write_lock.hpp \
  /opt/ros/humble/include/rclcpp/rclcpp/wait_set_template.hpp \
+ /opt/ros/humble/include/image_transport/image_transport/image_transport.hpp \
+ /opt/ros/humble/include/image_transport/image_transport/camera_publisher.hpp \
  /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/image.hpp \
  /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/image__struct.hpp \
  /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/header__struct.hpp \
@@ -633,18 +635,29 @@ CMakeFiles/hik_camera_node.dir/src/hik_camera_node.cpp.o: \
  /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/header__traits.hpp \
  /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/image__type_support.hpp \
  /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/rosidl_generator_cpp__visibility_control.hpp \
- /opt/ros/humble/include/std_msgs/std_msgs/msg/header.hpp \
- /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/header__builder.hpp \
- /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/header__type_support.hpp \
- /opt/ros/humble/include/std_msgs/std_msgs/msg/rosidl_generator_cpp__visibility_control.hpp \
- /opt/ros/humble/include/cv_bridge/cv_bridge/cv_bridge.h \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/compressed_image.hpp \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/compressed_image__struct.hpp \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/compressed_image__builder.hpp \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/compressed_image__traits.hpp \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/compressed_image__type_support.hpp \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/image_encodings.hpp \
- /usr/local/include/opencv4/opencv2/core/core.hpp \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/camera_info.hpp \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/camera_info__struct.hpp \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/region_of_interest__struct.hpp \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/camera_info__builder.hpp \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/camera_info__traits.hpp \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/region_of_interest__traits.hpp \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/camera_info__type_support.hpp \
+ /opt/ros/humble/include/image_transport/image_transport/single_subscriber_publisher.hpp \
+ /opt/ros/humble/include/image_transport/image_transport/visibility_control.hpp \
+ /opt/ros/humble/include/image_transport/image_transport/camera_subscriber.hpp \
+ /opt/ros/humble/include/image_transport/image_transport/publisher.hpp \
+ /opt/ros/humble/include/image_transport/image_transport/exception.hpp \
+ /opt/ros/humble/include/image_transport/image_transport/loader_fwds.hpp \
+ /opt/ros/humble/include/image_transport/image_transport/subscriber.hpp \
+ /opt/ros/humble/include/image_transport/image_transport/transport_hints.hpp \
+ /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/mvs_sdk_wrapper.hpp \
+ /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/MvCameraControl.h \
+ /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/MvErrorDefine.h \
+ /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/MvISPErrorDefine.h \
+ /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/CameraParams.h \
+ /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/PixelType.h \
+ /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/MvObsoleteInterfaces.h \
+ /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/ObsoleteCamParams.h \
  /usr/local/include/opencv4/opencv2/core.hpp \
  /usr/local/include/opencv4/opencv2/core/cvdef.h \
  /usr/local/include/opencv4/opencv2/core/version.hpp \
@@ -690,39 +703,6 @@ CMakeFiles/hik_camera_node.dir/src/hik_camera_node.cpp.o: \
  /usr/local/include/opencv4/opencv2/core/optim.hpp \
  /usr/local/include/opencv4/opencv2/core/ovx.hpp \
  /usr/local/include/opencv4/opencv2/core/cvdef.h \
- /usr/local/include/opencv4/opencv2/imgproc/imgproc.hpp \
- /usr/local/include/opencv4/opencv2/imgproc.hpp \
- /usr/local/include/opencv4/opencv2/imgproc/segmentation.hpp \
- /usr/local/include/opencv4/opencv2/imgproc/types_c.h \
- /usr/local/include/opencv4/opencv2/core/core_c.h \
- /usr/local/include/opencv4/opencv2/core/types_c.h \
- /opt/ros/humble/include/cv_bridge/cv_bridge/cv_bridge_export.h \
- /opt/ros/humble/include/image_transport/image_transport/image_transport.hpp \
- /opt/ros/humble/include/image_transport/image_transport/camera_publisher.hpp \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/camera_info.hpp \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/camera_info__struct.hpp \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/region_of_interest__struct.hpp \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/camera_info__builder.hpp \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/camera_info__traits.hpp \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/region_of_interest__traits.hpp \
- /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/camera_info__type_support.hpp \
- /opt/ros/humble/include/image_transport/image_transport/single_subscriber_publisher.hpp \
- /opt/ros/humble/include/image_transport/image_transport/visibility_control.hpp \
- /opt/ros/humble/include/image_transport/image_transport/camera_subscriber.hpp \
- /opt/ros/humble/include/image_transport/image_transport/publisher.hpp \
- /opt/ros/humble/include/image_transport/image_transport/exception.hpp \
- /opt/ros/humble/include/image_transport/image_transport/loader_fwds.hpp \
- /opt/ros/humble/include/image_transport/image_transport/subscriber.hpp \
- /opt/ros/humble/include/image_transport/image_transport/transport_hints.hpp \
- /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/mvs_sdk_wrapper.hpp \
- /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/MvCameraControl.h \
- /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/MvErrorDefine.h \
- /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/MvISPErrorDefine.h \
- /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/CameraParams.h \
- /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/PixelType.h \
- /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/MvObsoleteInterfaces.h \
- /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/ObsoleteCamParams.h \
- /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include/hik_camera_driver/mvs_sdk_wrapper.hpp \
  /opt/MVS/include/MvCameraControl.h /opt/MVS/include/PixelType.h \
  /usr/local/include/opencv4/opencv2/opencv.hpp \
  /usr/local/include/opencv4/opencv2/calib3d.hpp \
@@ -777,6 +757,8 @@ CMakeFiles/hik_camera_node.dir/src/hik_camera_node.cpp.o: \
  /usr/local/include/opencv4/opencv2/highgui.hpp \
  /usr/local/include/opencv4/opencv2/imgcodecs.hpp \
  /usr/local/include/opencv4/opencv2/videoio.hpp \
+ /usr/local/include/opencv4/opencv2/imgproc.hpp \
+ /usr/local/include/opencv4/opencv2/imgproc/segmentation.hpp \
  /usr/local/include/opencv4/opencv2/ml.hpp \
  /usr/local/include/opencv4/opencv2/ml/ml.inl.hpp \
  /usr/local/include/opencv4/opencv2/objdetect.hpp \
@@ -812,4 +794,21 @@ CMakeFiles/hik_camera_node.dir/src/hik_camera_node.cpp.o: \
  /usr/local/include/opencv4/opencv2/stitching/detail/camera.hpp \
  /usr/local/include/opencv4/opencv2/video.hpp \
  /usr/local/include/opencv4/opencv2/video/tracking.hpp \
- /usr/local/include/opencv4/opencv2/video/background_segm.hpp
+ /usr/local/include/opencv4/opencv2/video/background_segm.hpp \
+ /opt/ros/humble/include/cv_bridge/cv_bridge/cv_bridge.h \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/compressed_image.hpp \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/compressed_image__struct.hpp \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/compressed_image__builder.hpp \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/compressed_image__traits.hpp \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/compressed_image__type_support.hpp \
+ /opt/ros/humble/include/sensor_msgs/sensor_msgs/image_encodings.hpp \
+ /usr/local/include/opencv4/opencv2/core/core.hpp \
+ /usr/local/include/opencv4/opencv2/imgproc/imgproc.hpp \
+ /usr/local/include/opencv4/opencv2/imgproc/types_c.h \
+ /usr/local/include/opencv4/opencv2/core/core_c.h \
+ /usr/local/include/opencv4/opencv2/core/types_c.h \
+ /opt/ros/humble/include/cv_bridge/cv_bridge/cv_bridge_export.h \
+ /opt/ros/humble/include/std_msgs/std_msgs/msg/header.hpp \
+ /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/header__builder.hpp \
+ /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/header__type_support.hpp \
+ /opt/ros/humble/include/std_msgs/std_msgs/msg/rosidl_generator_cpp__visibility_control.hpp

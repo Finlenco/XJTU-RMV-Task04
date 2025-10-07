@@ -8,16 +8,9 @@
 #include <mutex>
 
 #include "rclcpp/rclcpp.hpp"
-#include "sensor_msgs/msg/image.hpp"
-#include "std_msgs/msg/header.hpp"
-#include "cv_bridge/cv_bridge.h"
 #include "image_transport/image_transport.hpp"
 #include "mvs_sdk_wrapper.hpp"
-#ifdef HAVE_MVS_SDK
-#include "MvCameraControl.h"
-#include "CameraParams.h"
-#include "PixelType.h"
-#endif
+#include <opencv2/core.hpp>
 
 namespace hik_camera_driver
 {
@@ -68,6 +61,7 @@ private:
     rclcpp::TimerBase::SharedPtr timer_;
     rclcpp::TimerBase::SharedPtr reconnect_timer_;
     rclcpp::TimerBase::SharedPtr init_timer_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_cb_handle_;
     
     // 参数
     std::string camera_ip_;

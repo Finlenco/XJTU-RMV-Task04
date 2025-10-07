@@ -286,6 +286,9 @@ TINYXML2_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libtinyxml2.so
 //The directory containing a CMake configuration file for TinyXML2.
 TinyXML2_DIR:PATH=TinyXML2_DIR-NOTFOUND
 
+//Enable Hikvision MVS SDK support
+USE_MVS_SDK:BOOL=ON
+
 //Path to a library.
 _lib:FILEPATH=/opt/ros/humble/lib/libmessage_filters.so
 

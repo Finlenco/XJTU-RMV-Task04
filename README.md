@@ -7,6 +7,7 @@
 - ✅ **自动设备发现和连接**：支持通过IP地址或序列号连接相机
 - ✅ **稳定图像采集**：高帧率图像数据采集和发布
 - ✅ **参数动态配置**：支持曝光时间、增益、帧率、像素格式等参数调节
+  - 运行时无重启同步到设备：关闭自动模式→限幅→写入→读回确认
 - ✅ **断线重连**：自动检测连接状态并重连
 - ✅ **标准ROS2接口**：发布标准的 `sensor_msgs/msg/Image`消息
 - ✅ **图像传输优化**：使用 `image_transport` 进行高效图像传输
@@ -364,6 +365,31 @@ ros2 param list /hik_camera_driver
 ros2 param get /hik_camera_driver frame_rate
 ros2 param set /hik_camera_driver frame_rate 30.0
 ```
+
+### 运行时同步参数（无重启）
+
+驱动在收到参数变更后，会即时对设备生效，并在日志中读回确认。
+
+```bash
+# 曝光（单位: 微秒）
+ros2 param set /hik_camera_driver exposure_time 2000.0
+
+# 增益（将按型号回退尝试 Gain → AnalogGain → GainRaw）
+ros2 param set /hik_camera_driver gain 2.0
+
+# 采样帧率（启用 AcquisitionFrameRateEnable，限幅后写入并读回）
+ros2 param set /hik_camera_driver frame_rate 60.0
+
+# 像素格式（必要时停采集-修改-重启采集）
+ros2 param set /hik_camera_driver pixel_format bgr8
+```
+
+日志关键字：
+- 收到参数更新请求(...)
+- 曝光(读取): ... us / 增益(读取): ...
+- 采样帧率(读取): ... (目标=...)
+- 实际输出帧率(ResultingFrameRate): ...（若机型支持）
+- 像素格式(读取): <enum>
 
 ### 实时监控
 

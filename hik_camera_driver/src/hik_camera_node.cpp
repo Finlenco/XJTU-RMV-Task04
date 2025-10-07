@@ -1,5 +1,4 @@
 #include "hik_camera_driver/hik_camera_driver.hpp"
-#include "hik_camera_driver/mvs_sdk_wrapper.hpp"
 #ifdef HAVE_MVS_SDK
 #include "MvCameraControl.h"
 #include "PixelType.h"
@@ -7,6 +6,9 @@
 #include <chrono>
 #include <thread>
 #include <opencv2/opencv.hpp>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/msg/image.hpp>
+#include <std_msgs/msg/header.hpp>
 #include <rclcpp/logging.hpp>
 
 namespace hik_camera_driver
@@ -46,11 +48,11 @@ HikCameraDriver::HikCameraDriver()
     auto param_callback = [this](const std::vector<rclcpp::Parameter> & parameters) -> rcl_interfaces::msg::SetParametersResult {
         rcl_interfaces::msg::SetParametersResult result;
         result.successful = true;
+        RCLCPP_INFO(this->get_logger(), "收到参数更新请求(%zu)", parameters.size());
         this->onParameterChange(parameters);
         return result;
     };
-    auto callback_handle = this->add_on_set_parameters_callback(param_callback);
-    (void)callback_handle; // 避免未使用警告
+    param_cb_handle_ = this->add_on_set_parameters_callback(param_callback);
     
     // 使用定时器延迟初始化（避免在构造函数中调用shared_from_this）
     init_timer_ = this->create_wall_timer(
@@ -68,6 +70,12 @@ void HikCameraDriver::initializeAfterConstruction()
     image_transport::ImageTransport it(shared_from_this());
     image_pub_ = it.advertise(topic_name_, 1);
     RCLCPP_INFO(this->get_logger(), "图像发布者已创建，话题: %s", topic_name_.c_str());
+    // 打印是否启用SDK分支
+#ifdef HAVE_MVS_SDK
+    RCLCPP_INFO(this->get_logger(), "HAVE_MVS_SDK: 启用");
+#else
+    RCLCPP_WARN(this->get_logger(), "HAVE_MVS_SDK: 未启用(将不会对相机硬件写入)");
+#endif
     
     // 初始化相机
     if (initializeCamera()) {
@@ -356,7 +364,7 @@ void HikCameraDriver::cameraCaptureThread()
                             cv::Mat raw(info.nHeight, info.nWidth, CV_8UC1, buffer.data());
                             cv::cvtColor(raw, frame, cv::COLOR_BayerGR2BGR);
                         } else {
-                            RCLCPP_WARN(this->get_logger(), "不支持的像素格式: %d", info.enPixelType);
+                            RCLCPP_WARN(this->get_logger(), "不支持的像素格式: %ld", static_cast<long>(info.enPixelType));
                         }
                     }
                 }
@@ -373,9 +381,13 @@ void HikCameraDriver::cameraCaptureThread()
                     publishImage(frame, now);
                 }
                 
-                // 控制帧率
+                // 控制帧率（使用本地快照以减少数据竞争）
+                double target_rate = frame_rate_;
+                if (target_rate < 1e-3) {
+                    target_rate = 1.0; // 避免除零
+                }
                 std::this_thread::sleep_for(
-                    std::chrono::milliseconds(static_cast<int>(1000.0 / frame_rate_))
+                    std::chrono::milliseconds(static_cast<int>(1000.0 / target_rate))
                 );
                 
             } catch (const std::exception& e) {
@@ -422,9 +434,33 @@ bool HikCameraDriver::setExposureTime(double exposure_time)
     if (!camera_connected_) return false;
     
     try {
-        // 这里需要根据海康威视MVS SDK的实际API进行实现
-        // int nRet = MV_CC_SetFloatValue(camera_handle_, "ExposureTime", exposure_time);
         RCLCPP_DEBUG(this->get_logger(), "设置曝光时间: %f", exposure_time);
+#ifdef HAVE_MVS_SDK
+        if (!camera_handle_) return false;
+        // 关闭自动曝光以确保手动曝光生效
+        MV_CC_SetEnumValue(camera_handle_, "ExposureAuto", 0); // Off
+        // 限幅到设备允许范围
+        MVCC_FLOATVALUE range{};
+        if (MV_CC_GetFloatValue(camera_handle_, "ExposureTime", &range) == MV_OK) {
+            if (exposure_time < range.fMin) exposure_time = range.fMin;
+            if (exposure_time > range.fMax) exposure_time = range.fMax;
+        }
+        // 曝光单位通常为微秒(us)
+        int nRet = MV_CC_SetFloatValue(camera_handle_, "ExposureTime", static_cast<float>(exposure_time));
+        if (nRet != MV_OK) {
+            RCLCPP_WARN(this->get_logger(), "设置ExposureTime失败(%d)，尝试ExposureTimeAbs...", nRet);
+            nRet = MV_CC_SetFloatValue(camera_handle_, "ExposureTimeAbs", static_cast<float>(exposure_time));
+            if (nRet != MV_OK) {
+                RCLCPP_ERROR(this->get_logger(), "ExposureTimeAbs仍失败: %d", nRet);
+                return false;
+            }
+        }
+        // 读回确认
+        MVCC_FLOATVALUE cur{};
+        if (MV_CC_GetFloatValue(camera_handle_, "ExposureTime", &cur) == MV_OK) {
+            RCLCPP_INFO(this->get_logger(), "曝光(读取): %.2f us", cur.fCurValue);
+        }
+#endif
         return true;
     } catch (const std::exception& e) {
         RCLCPP_ERROR(this->get_logger(), "设置曝光时间失败: %s", e.what());
@@ -437,9 +473,36 @@ bool HikCameraDriver::setGain(double gain)
     if (!camera_connected_) return false;
     
     try {
-        // 这里需要根据海康威视MVS SDK的实际API进行实现
-        // int nRet = MV_CC_SetFloatValue(camera_handle_, "Gain", gain);
         RCLCPP_DEBUG(this->get_logger(), "设置增益: %f", gain);
+#ifdef HAVE_MVS_SDK
+        if (!camera_handle_) return false;
+        // 根据型号，可能为Gain或AnalogGain等，这里先用通用节点名
+        // 关闭自动增益
+        MV_CC_SetEnumValue(camera_handle_, "GainAuto", 0); // Off
+        // 限幅
+        MVCC_FLOATVALUE range{};
+        if (MV_CC_GetFloatValue(camera_handle_, "Gain", &range) == MV_OK) {
+            if (gain < range.fMin) gain = range.fMin;
+            if (gain > range.fMax) gain = range.fMax;
+        }
+        int nRet = MV_CC_SetFloatValue(camera_handle_, "Gain", static_cast<float>(gain));
+        if (nRet != MV_OK) {
+            RCLCPP_WARN(this->get_logger(), "设置Gain失败(%d)，尝试AnalogGain...", nRet);
+            nRet = MV_CC_SetFloatValue(camera_handle_, "AnalogGain", static_cast<float>(gain));
+            if (nRet != MV_OK) {
+                RCLCPP_WARN(this->get_logger(), "AnalogGain失败(%d)，尝试GainRaw...", nRet);
+                nRet = MV_CC_SetIntValue(camera_handle_, "GainRaw", static_cast<int>(gain));
+                if (nRet != MV_OK) {
+                    RCLCPP_ERROR(this->get_logger(), "GainRaw仍失败: %d", nRet);
+                    return false;
+                }
+            }
+        }
+        MVCC_FLOATVALUE cur{};
+        if (MV_CC_GetFloatValue(camera_handle_, "Gain", &cur) == MV_OK) {
+            RCLCPP_INFO(this->get_logger(), "增益(读取): %.2f", cur.fCurValue);
+        }
+#endif
         return true;
     } catch (const std::exception& e) {
         RCLCPP_ERROR(this->get_logger(), "设置增益失败: %s", e.what());
@@ -450,11 +513,46 @@ bool HikCameraDriver::setGain(double gain)
 bool HikCameraDriver::setFrameRate(double frame_rate)
 {
     if (!camera_connected_) return false;
-    
+
     try {
-        // 这里需要根据海康威视MVS SDK的实际API进行实现
-        // int nRet = MV_CC_SetFloatValue(camera_handle_, "AcquisitionFrameRate", frame_rate);
-        RCLCPP_DEBUG(this->get_logger(), "设置帧率: %f", frame_rate);
+#ifdef HAVE_MVS_SDK
+        if (!camera_handle_) return false;
+        // 确保连续采集 + 启用采样限速
+        MV_CC_SetEnumValue(camera_handle_, "TriggerMode", 0); // Off
+        MV_CC_SetEnumValue(camera_handle_, "AcquisitionMode", 2); // Continuous
+        MV_CC_SetBoolValue(camera_handle_, "AcquisitionFrameRateEnable", true);
+
+        // 限幅
+        MVCC_FLOATVALUE range{};
+        if (MV_CC_GetFloatValue(camera_handle_, "AcquisitionFrameRate", &range) == MV_OK) {
+            if (frame_rate < range.fMin) frame_rate = range.fMin;
+            if (frame_rate > range.fMax) frame_rate = range.fMax;
+        }
+
+        int nRet = MV_CC_SetFloatValue(camera_handle_, "AcquisitionFrameRate", static_cast<float>(frame_rate));
+        if (nRet != MV_OK) {
+            RCLCPP_WARN(this->get_logger(), "设置AcquisitionFrameRate失败: %d", nRet);
+            return false;
+        }
+
+        // 读回确认
+        MVCC_FLOATVALUE fps_val{};
+        int gr = MV_CC_GetFloatValue(camera_handle_, "AcquisitionFrameRate", &fps_val);
+        if (gr == MV_OK) {
+            RCLCPP_INFO(this->get_logger(), "采样帧率(读取): %.2f FPS (目标=%.2f)", fps_val.fCurValue, frame_rate);
+        } else {
+            RCLCPP_WARN(this->get_logger(), "读取AcquisitionFrameRate失败: %d", gr);
+        }
+
+        // 若设备支持，读取实际输出帧率
+        MVCC_FLOATVALUE resulting{};
+        if (MV_CC_GetFloatValue(camera_handle_, "ResultingFrameRate", &resulting) == MV_OK) {
+            RCLCPP_INFO(this->get_logger(), "实际输出帧率(ResultingFrameRate): %.2f FPS", resulting.fCurValue);
+        }
+#else
+        RCLCPP_DEBUG(this->get_logger(), "设置帧率(模拟): %f", frame_rate);
+#endif
+        frame_rate_ = frame_rate;
         return true;
     } catch (const std::exception& e) {
         RCLCPP_ERROR(this->get_logger(), "设置帧率失败: %s", e.what());
@@ -467,9 +565,47 @@ bool HikCameraDriver::setPixelFormat(const std::string & pixel_format)
     if (!camera_connected_) return false;
     
     try {
-        // 这里需要根据海康威视MVS SDK的实际API进行实现
-        // 需要将字符串格式转换为SDK对应的枚举值
         RCLCPP_DEBUG(this->get_logger(), "设置像素格式: %s", pixel_format.c_str());
+#ifdef HAVE_MVS_SDK
+        if (!camera_handle_) return false;
+        // 停采集后修改像素格式更稳妥
+        MV_CC_StopGrabbing(camera_handle_);
+        // 将常用格式字符串映射为 MVS PixelType
+        int pixel_enum = -1;
+        if (pixel_format == "bgr8") {
+            pixel_enum = PixelType_Gvsp_BGR8_Packed;
+        } else if (pixel_format == "rgb8") {
+            pixel_enum = PixelType_Gvsp_RGB8_Packed;
+        } else if (pixel_format == "mono8" || pixel_format == "mono8") {
+            pixel_enum = PixelType_Gvsp_Mono8;
+        } else if (pixel_format == "bayer_rg8") {
+            pixel_enum = PixelType_Gvsp_BayerRG8;
+        } else if (pixel_format == "bayer_bg8") {
+            pixel_enum = PixelType_Gvsp_BayerBG8;
+        } else if (pixel_format == "bayer_gr8") {
+            pixel_enum = PixelType_Gvsp_BayerGR8;
+        } else if (pixel_format == "bayer_gb8") {
+            pixel_enum = PixelType_Gvsp_BayerGB8;
+        }
+
+        if (pixel_enum != -1) {
+            int nRet = MV_CC_SetEnumValue(camera_handle_, "PixelFormat", pixel_enum);
+            if (nRet != MV_OK) {
+                RCLCPP_WARN(this->get_logger(), "设置PixelFormat失败: %d", nRet);
+                MV_CC_StartGrabbing(camera_handle_);
+                return false;
+            }
+            // 读回确认
+            MVCC_ENUMVALUE cur{};
+            if (MV_CC_GetEnumValue(camera_handle_, "PixelFormat", &cur) == MV_OK) {
+                RCLCPP_INFO(this->get_logger(), "像素格式(读取): %u", cur.nCurValue);
+            }
+            MV_CC_StartGrabbing(camera_handle_);
+        } else {
+            RCLCPP_WARN(this->get_logger(), "未知的像素格式字符串: %s", pixel_format.c_str());
+            return false;
+        }
+#endif
         return true;
     } catch (const std::exception& e) {
         RCLCPP_ERROR(this->get_logger(), "设置像素格式失败: %s", e.what());
