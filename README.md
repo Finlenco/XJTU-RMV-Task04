@@ -53,30 +53,9 @@ echo 'export MVS_HOME=$HOME/opt/MVS' >> ~/.bashrc
 echo 'export LD_LIBRARY_PATH=$HOME/opt/MVS/lib/64:$LD_LIBRARY_PATH' >> ~/.bashrc
 source ~/.bashrc
 
-# 安装 udev 规则（若 SDK 提供）
-RULE_FILE=$(find "$HOME/opt/MVS" -maxdepth 7 -type f -iname '*hik*usb*rules' -o -iname '*mv*usb*rules' -o -iname '90-*.rules' | head -n1); echo "$RULE_FILE"
-[ -n "$RULE_FILE" ] && sudo cp "$RULE_FILE" /etc/udev/rules.d/ && sudo udevadm control --reload-rules && sudo udevadm trigger
 ```
 
-2) 配置参数（默认从 YAML 读取）
-
-编辑 `hik_camera_driver/config/camera_params.yaml`：
-
-```yaml
-hik_camera_driver:
-  ros__parameters:
-    camera_ip: ""
-    camera_serial: "00F26632041"
-    topic_name: "/image_raw"
-    auto_reconnect: true
-    reconnect_interval: 5
-    frame_rate: 60.0
-    exposure_time: 1000.0
-    gain: 1.0
-    pixel_format: "bgr8"
-```
-
-3) 编译与启动
+2) 编译与启动
 
 ```bash
 cd /home/fin/Code/RoboMaster/Task4/hik_camera_driver
@@ -85,15 +64,8 @@ source install/setup.bash
 ros2 launch hik_camera_driver hik_camera_system.launch.py use_rviz:=true monitor_fps:=true
 ```
 
-4) 验证
 
-```bash
-ros2 topic list | grep image_raw
-ros2 topic hz /image_raw
-ros2 topic echo /image_raw/header
-```
-
-5) 脚本启动（可选，便捷方式）
+3) 脚本启动（可选，便捷方式）
 
 ```bash
 cd /home/fin/Code/RoboMaster/Task4/hik_camera_driver

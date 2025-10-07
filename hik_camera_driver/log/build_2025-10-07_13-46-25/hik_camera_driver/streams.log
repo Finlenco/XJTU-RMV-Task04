@@ -1,0 +1,90 @@
+[0.007s] Invoking command in '/home/fin/Code/RoboMaster/Task4/hik_camera_driver/build/hik_camera_driver': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/fin/Code/RoboMaster/Task4/hik_camera_driver/build/hik_camera_driver -- -j24 -l24
+[0.024s] -- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.107s] -- Found rclcpp: 16.0.15 (/opt/ros/humble/share/rclcpp/cmake)
+[0.122s] -- Found rosidl_generator_c: 3.1.7 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.123s] -- Found rosidl_adapter: 3.1.7 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.126s] -- Found rosidl_generator_cpp: 3.1.7 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.131s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.137s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.152s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.153s] -- Found rmw_fastrtps_cpp: 6.2.8 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.210s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.242s] -- Found sensor_msgs: 4.9.0 (/opt/ros/humble/share/sensor_msgs/cmake)
+[0.255s] -- Found cv_bridge: 3.2.1 (/opt/ros/humble/share/cv_bridge/cmake)
+[0.258s] -- Found image_transport: 3.1.12 (/opt/ros/humble/share/image_transport/cmake)
+[0.269s] -- MVS SDK directory: /opt/MVS
+[0.269s] -- MVS library directory: /opt/MVS/lib/64
+[0.271s] -- Linking MVS SDK libraries
+[0.271s] -- Found ament_lint_auto: 0.12.14 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[0.306s] -- Added test 'copyright' to check source files copyright and LICENSE
+[0.311s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[0.311s] -- Configured cppcheck include dirs: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/include
+[0.311s] -- Configured cppcheck exclude dirs and/or files: 
+[0.316s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[0.316s] -- Configured cpplint exclude dirs and/or files: 
+[0.316s] -- Added test 'flake8' to check Python code syntax and style conventions
+[0.318s] -- Added test 'lint_cmake' to check CMake code style
+[0.318s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[0.323s] -- Added test 'uncrustify' to check C / C++ code style
+[0.323s] -- Configured uncrustify additional arguments: 
+[0.324s] -- Added test 'xmllint' to check XML markup files
+[0.324s] -- Configuring done
+[0.333s] -- Generating done
+[0.337s] -- Build files have been written to: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/build/hik_camera_driver
+[0.355s] [35m[1mConsolidate compiler generated dependencies of target fps_monitor_node[0m
+[0.356s] [35m[1mConsolidate compiler generated dependencies of target param_info_node[0m
+[0.356s] [35m[1mConsolidate compiler generated dependencies of target hik_camera_node[0m
+[0.368s] [ 28%] [32mBuilding CXX object CMakeFiles/param_info_node.dir/src/param_info_node.cpp.o[0m
+[0.368s] [ 28%] [32mBuilding CXX object CMakeFiles/fps_monitor_node.dir/src/fps_monitor_node.cpp.o[0m
+[0.369s] [ 42%] [32mBuilding CXX object CMakeFiles/hik_camera_node.dir/src/hik_camera_node.cpp.o[0m
+[0.370s] [ 57%] [32mBuilding CXX object CMakeFiles/hik_camera_node.dir/src/mvs_sdk_wrapper.cpp.o[0m
+[2.566s] [ 71%] [32m[1mLinking CXX executable param_info_node[0m
+[2.680s] [ 71%] Built target param_info_node
+[2.909s] [ 85%] [32m[1mLinking CXX executable hik_camera_node[0m
+[2.965s] /usr/bin/ld: warning: libopencv_imgcodecs.so.4.5d, needed by /opt/ros/humble/lib/libcv_bridge.so, may conflict with libopencv_imgcodecs.so.413
+[2.966s] /usr/bin/ld: warning: libopencv_imgproc.so.4.5d, needed by /opt/ros/humble/lib/libcv_bridge.so, may conflict with libopencv_imgproc.so.413
+[2.966s] /usr/bin/ld: warning: libopencv_core.so.4.5d, needed by /opt/ros/humble/lib/libcv_bridge.so, may conflict with libopencv_core.so.413
+[3.121s] [ 85%] Built target hik_camera_node
+[4.647s] [100%] [32m[1mLinking CXX executable fps_monitor_node[0m
+[4.859s] [100%] Built target fps_monitor_node
+[4.866s] Invoked command in '/home/fin/Code/RoboMaster/Task4/hik_camera_driver/build/hik_camera_driver' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/fin/Code/RoboMaster/Task4/hik_camera_driver/build/hik_camera_driver -- -j24 -l24
+[4.876s] Invoking command in '/home/fin/Code/RoboMaster/Task4/hik_camera_driver/build/hik_camera_driver': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/fin/Code/RoboMaster/Task4/hik_camera_driver/build/hik_camera_driver
+[4.880s] -- Install configuration: ""
+[4.880s] -- Installing: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/lib/hik_camera_driver/hik_camera_node
+[4.880s] -- Set runtime path of "/home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/lib/hik_camera_driver/hik_camera_node" to ""
+[4.880s] -- Installing: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/lib/hik_camera_driver/fps_monitor_node
+[4.882s] -- Set runtime path of "/home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/lib/hik_camera_driver/fps_monitor_node" to ""
+[4.882s] -- Installing: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/lib/hik_camera_driver/param_info_node
+[4.883s] -- Set runtime path of "/home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/lib/hik_camera_driver/param_info_node" to ""
+[4.883s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/include
+[4.883s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/include/hik_camera_driver
+[4.883s] -- Installing: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/include/hik_camera_driver/hik_camera_driver.hpp
+[4.883s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/include/hik_camera_driver/MvObsoleteInterfaces.h
+[4.883s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/include/hik_camera_driver/PixelType.h
+[4.883s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/include/hik_camera_driver/MvISPErrorDefine.h
+[4.883s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/include/hik_camera_driver/MvCameraControl.h
+[4.883s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/include/hik_camera_driver/mvs_sdk_wrapper.hpp
+[4.883s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/include/hik_camera_driver/ObsoleteCamParams.h
+[4.883s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/include/hik_camera_driver/MvErrorDefine.h
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/include/hik_camera_driver/CameraParams.h
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/launch
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/launch/hik_camera_system.launch.py
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/config
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/config/camera_params.yaml
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/config/camera_display.rviz
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/ament_index/resource_index/package_run_dependencies/hik_camera_driver
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/ament_index/resource_index/parent_prefix_path/hik_camera_driver
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/environment/ament_prefix_path.sh
+[4.884s] -- Installing: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/environment/ament_prefix_path.dsv
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/environment/path.sh
+[4.884s] -- Installing: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/environment/path.dsv
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/local_setup.bash
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/local_setup.sh
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/local_setup.zsh
+[4.884s] -- Installing: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/local_setup.dsv
+[4.884s] -- Installing: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/package.dsv
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/ament_index/resource_index/packages/hik_camera_driver
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/cmake/hik_camera_driverConfig.cmake
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/cmake/hik_camera_driverConfig-version.cmake
+[4.884s] -- Up-to-date: /home/fin/Code/RoboMaster/Task4/hik_camera_driver/install/hik_camera_driver/share/hik_camera_driver/package.xml
+[4.885s] Invoked command in '/home/fin/Code/RoboMaster/Task4/hik_camera_driver/build/hik_camera_driver' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/fin/Code/RoboMaster/Task4/hik_camera_driver/build/hik_camera_driver

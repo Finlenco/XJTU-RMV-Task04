@@ -1,0 +1,13 @@
+/home/fin/Code/RoboMaster/Task4/hik_camera_driver/src/hik_camera_node.cpp: In member function ‘void hik_camera_driver::HikCameraDriver::cameraCaptureThread()’:
+/home/fin/Code/RoboMaster/Task4/hik_camera_driver/src/hik_camera_node.cpp:241:31: error: ‘MV_CC_PIXEL_CONVERT_PARAM’ {aka ‘struct _MV_CC_PIXEL_CONVERT_PARAM_’} has no member named ‘pDstBuf’; did you mean ‘pDstBuffer’?
+  241 |                             c.pDstBuf = dst.data();
+      |                               ^~~~~~~
+      |                               pDstBuffer
+/home/fin/Code/RoboMaster/Task4/hik_camera_driver/src/hik_camera_node.cpp:242:31: error: ‘MV_CC_PIXEL_CONVERT_PARAM’ {aka ‘struct _MV_CC_PIXEL_CONVERT_PARAM_’} has no member named ‘nDstBufSize’; did you mean ‘nDstBufferSize’?
+  242 |                             c.nDstBufSize = static_cast<unsigned int>(dst.size());
+      |                               ^~~~~~~~~~~
+      |                               nDstBufferSize
+gmake[2]: *** [CMakeFiles/hik_camera_node.dir/build.make:76：CMakeFiles/hik_camera_node.dir/src/hik_camera_node.cpp.o] 错误 1
+gmake[1]: *** [CMakeFiles/Makefile2:141：CMakeFiles/hik_camera_node.dir/all] 错误 2
+gmake[1]: *** 正在等待未完成的任务....
+gmake: *** [Makefile:146：all] 错误 2

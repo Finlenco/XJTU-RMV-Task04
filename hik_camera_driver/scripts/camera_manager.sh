@@ -94,23 +94,19 @@ start_system() {
     check_ros2_env
     check_workspace
     
-    # 构建启动参数
+    # 构建启动参数（仅显式传参时才覆盖 YAML）
     LAUNCH_ARGS=""
-    if [ -n "$CAMERA_IP" ]; then
-        LAUNCH_ARGS="$LAUNCH_ARGS camera_ip:=$CAMERA_IP"
-    fi
-    if [ -n "$CAMERA_SERIAL" ]; then
-        LAUNCH_ARGS="$LAUNCH_ARGS camera_serial:=$CAMERA_SERIAL"
-    fi
-    LAUNCH_ARGS="$LAUNCH_ARGS topic_name:=$TOPIC_NAME"
-    LAUNCH_ARGS="$LAUNCH_ARGS frame_rate:=$FRAME_RATE"
-    LAUNCH_ARGS="$LAUNCH_ARGS exposure_time:=$EXPOSURE_TIME"
-    LAUNCH_ARGS="$LAUNCH_ARGS gain:=$GAIN"
-    LAUNCH_ARGS="$LAUNCH_ARGS pixel_format:=$PIXEL_FORMAT"
-    LAUNCH_ARGS="$LAUNCH_ARGS auto_reconnect:=$AUTO_RECONNECT"
-    LAUNCH_ARGS="$LAUNCH_ARGS reconnect_interval:=$RECONNECT_INTERVAL"
-    LAUNCH_ARGS="$LAUNCH_ARGS use_rviz:=$USE_RVIZ"
-    LAUNCH_ARGS="$LAUNCH_ARGS monitor_fps:=$MONITOR_FPS"
+    [ -n "$CAMERA_IP" ] && LAUNCH_ARGS+=" camera_ip:=$CAMERA_IP"
+    [ -n "$CAMERA_SERIAL" ] && LAUNCH_ARGS+=" camera_serial:=$CAMERA_SERIAL"
+    [ -n "$TOPIC_NAME" ] && LAUNCH_ARGS+=" topic_name:=$TOPIC_NAME"
+    [ -n "$FRAME_RATE" ] && LAUNCH_ARGS+=" frame_rate:=$FRAME_RATE"
+    [ -n "$EXPOSURE_TIME" ] && LAUNCH_ARGS+=" exposure_time:=$EXPOSURE_TIME"
+    [ -n "$GAIN" ] && LAUNCH_ARGS+=" gain:=$GAIN"
+    [ -n "$PIXEL_FORMAT" ] && LAUNCH_ARGS+=" pixel_format:=$PIXEL_FORMAT"
+    [ -n "$AUTO_RECONNECT" ] && LAUNCH_ARGS+=" auto_reconnect:=$AUTO_RECONNECT"
+    [ -n "$RECONNECT_INTERVAL" ] && LAUNCH_ARGS+=" reconnect_interval:=$RECONNECT_INTERVAL"
+    [ -n "$USE_RVIZ" ] && LAUNCH_ARGS+=" use_rviz:=$USE_RVIZ"
+    [ -n "$MONITOR_FPS" ] && LAUNCH_ARGS+=" monitor_fps:=$MONITOR_FPS"
     
     echo -e "${CYAN}📋 启动参数:${NC}"
     echo "  相机IP: $CAMERA_IP"

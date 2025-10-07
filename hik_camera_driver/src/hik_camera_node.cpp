@@ -215,15 +215,28 @@ bool HikCameraDriver::initializeCamera()
             return false;
         }
 
-        // 设置连续采集模式与触发关闭（若可用）
-        // 忽略错误但打印日志，避免部分虚拟设备不支持时报错中断
+        // 设置连续采集与采样限速（若可用）
+        // 顺序：TriggerMode=Off -> AcquisitionMode=Continuous -> AcquisitionFrameRateEnable=1 -> AcquisitionFrameRate=目标值
         do {
             int r1 = MV_CC_SetEnumValue(camera_handle_, "TriggerMode", 0); // Off
             if (r1 != MV_OK) RCLCPP_WARN(this->get_logger(), "设置TriggerMode失败: %d", r1);
-            int r2 = MV_CC_SetEnumValue(camera_handle_, "AcquisitionMode", 2); // Continuous(一般为2)
+
+            int r2 = MV_CC_SetEnumValue(camera_handle_, "AcquisitionMode", 2); // Continuous
             if (r2 != MV_OK) RCLCPP_WARN(this->get_logger(), "设置AcquisitionMode失败: %d", r2);
+
+            int rEn = MV_CC_SetBoolValue(camera_handle_, "AcquisitionFrameRateEnable", true);
+            if (rEn != MV_OK) RCLCPP_WARN(this->get_logger(), "开启AcquisitionFrameRateEnable失败: %d", rEn);
+
             int r3 = MV_CC_SetFloatValue(camera_handle_, "AcquisitionFrameRate", static_cast<float>(frame_rate_));
             if (r3 != MV_OK) RCLCPP_WARN(this->get_logger(), "设置AcquisitionFrameRate失败: %d", r3);
+
+            // 读回确认
+            MVCC_FLOATVALUE fps_val{};
+            int gr = MV_CC_GetFloatValue(camera_handle_, "AcquisitionFrameRate", &fps_val);
+            if (gr == MV_OK)
+                RCLCPP_INFO(this->get_logger(), "采样帧率(读取): %.2f FPS (目标=%.2f)", fps_val.fCurValue, frame_rate_);
+            else
+                RCLCPP_WARN(this->get_logger(), "读取AcquisitionFrameRate失败: %d", gr);
         } while (0);
 
         int sg = MV_CC_StartGrabbing(camera_handle_);
