@@ -95,16 +95,23 @@ start_system() {
     check_workspace
     
     # 构建启动参数（仅显式传参时才覆盖 YAML）
+    # 注意：节点参数需要通过 --ros-args -p 传递；功能性开关仍用 launch 参数
     LAUNCH_ARGS=""
-    [ -n "$CAMERA_IP" ] && LAUNCH_ARGS+=" camera_ip:=$CAMERA_IP"
-    [ -n "$CAMERA_SERIAL" ] && LAUNCH_ARGS+=" camera_serial:=$CAMERA_SERIAL"
-    [ -n "$TOPIC_NAME" ] && LAUNCH_ARGS+=" topic_name:=$TOPIC_NAME"
-    [ -n "$FRAME_RATE" ] && LAUNCH_ARGS+=" frame_rate:=$FRAME_RATE"
-    [ -n "$EXPOSURE_TIME" ] && LAUNCH_ARGS+=" exposure_time:=$EXPOSURE_TIME"
-    [ -n "$GAIN" ] && LAUNCH_ARGS+=" gain:=$GAIN"
-    [ -n "$PIXEL_FORMAT" ] && LAUNCH_ARGS+=" pixel_format:=$PIXEL_FORMAT"
-    [ -n "$AUTO_RECONNECT" ] && LAUNCH_ARGS+=" auto_reconnect:=$AUTO_RECONNECT"
-    [ -n "$RECONNECT_INTERVAL" ] && LAUNCH_ARGS+=" reconnect_interval:=$RECONNECT_INTERVAL"
+    ROS_ARGS=""
+    add_param() {
+        # $1=key $2=value
+        [ -n "$2" ] && ROS_ARGS+=" -p $1:=$2"
+    }
+    add_param "camera_ip" "$CAMERA_IP"
+    add_param "camera_serial" "$CAMERA_SERIAL"
+    add_param "topic_name" "$TOPIC_NAME"
+    add_param "frame_rate" "$FRAME_RATE"
+    add_param "exposure_time" "$EXPOSURE_TIME"
+    add_param "gain" "$GAIN"
+    add_param "pixel_format" "$PIXEL_FORMAT"
+    add_param "auto_reconnect" "$AUTO_RECONNECT"
+    add_param "reconnect_interval" "$RECONNECT_INTERVAL"
+    # launch 级别开关
     [ -n "$USE_RVIZ" ] && LAUNCH_ARGS+=" use_rviz:=$USE_RVIZ"
     [ -n "$MONITOR_FPS" ] && LAUNCH_ARGS+=" monitor_fps:=$MONITOR_FPS"
     
@@ -123,7 +130,11 @@ start_system() {
     
     # 启动系统
     echo -e "${BLUE}🎬 启动系统...${NC}"
-    ros2 launch hik_camera_driver hik_camera_system.launch.py $LAUNCH_ARGS
+    if [ -n "$ROS_ARGS" ]; then
+        ros2 launch hik_camera_driver hik_camera_system.launch.py $LAUNCH_ARGS --ros-args $ROS_ARGS
+    else
+        ros2 launch hik_camera_driver hik_camera_system.launch.py $LAUNCH_ARGS
+    fi
 }
 
 # 测试系统
